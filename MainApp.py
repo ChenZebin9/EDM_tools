@@ -30,7 +30,7 @@ class ConfigData( object ):
         # 测量速度
         self.ms = 20
         # 超差时处理语句
-        self.eh1 = 'SHOWDLG (OUT OF TOLERANCE)'
+        self.eh1 = 'SHOWDLG (HEY! OUT OF TOLERANCE!)'
 
 
 def get_template_el_block():
