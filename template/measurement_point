@@ -1,0 +1,29 @@
+DEF_SUB({pNr})
+{{
+MAS_COLLOFF
+POS_SAVE ()
+PAR06 = PARI{d}
+/* G488 A{dd} X{dd1} B100 E{ps} R2
+/* G79
+POS_LININC ({d}{rd:.3f})
+/* G488 A{dd} X{dd2} B100 E{ms} R2
+/* G79
+POS_SAVE ()
+PAR07 = PARI{d}
+POS_LININC ({d}{rd:.3f})
+/* G488 A{dd} X{dd2} B100 E{ms} R2
+/* G79
+POS_SAVE ()
+PAR08 = PARI{d}
+PAR09 = PAR07 - PAR08
+PAR10 = ABS(PAR09)
+PAR09 = 0
+IF(PAR10 > {ma:.3f})
+{{
+PAR09 = -1
+}}
+PAR10 = PAR07 + PAR08
+PAR10 = PAR10 / 2
+POS_LINABS ({d}PAR06)
+MAS_COLLON
+}}
