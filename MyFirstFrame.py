@@ -66,10 +66,13 @@ class MyFrame1 ( wx.Frame ):
 		self.m_panel4 = wx.Panel( self.m_notebook2, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer10 = wx.BoxSizer( wx.VERTICAL )
 		
-		self.measureElCheckBox = wx.CheckBox( self.m_panel4, wx.ID_ANY, u"加工前测量电极", wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer10.Add( self.measureElCheckBox, 0, wx.ALL, 5 )
-		
 		gSizer1 = wx.GridSizer( 0, 2, 0, 0 )
+		
+		self.measureElCheckBox = wx.CheckBox( self.m_panel4, wx.ID_ANY, u"加工前测量电极", wx.DefaultPosition, wx.DefaultSize, 0 )
+		gSizer1.Add( self.measureElCheckBox, 0, wx.ALL, 5 )
+		
+		self.elInfoTextBox = wx.TextCtrl( self.m_panel4, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		gSizer1.Add( self.elInfoTextBox, 0, wx.ALL, 5 )
 		
 		self.m_staticText4 = wx.StaticText( self.m_panel4, wx.ID_ANY, u"X方向长度", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText4.Wrap( -1 )

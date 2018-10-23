@@ -1,1 +1,1 @@
-pyinstaller --windowed --onefile --icon=MainApp.ico MainApp.py
+pyinstaller --windowed --icon=MainApp.ico MainApp.py

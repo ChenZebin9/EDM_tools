@@ -249,6 +249,7 @@ class MyFrame( MyFirstFrame.MyFrame1 ):
         selected_el = self.elListBox.GetStringSelection()
         self.current_electrode = selected_el
         el_data = self.current_program.el_dict[selected_el]
+        wp_name = self.current_program.el_2_wp[selected_el]
         self.measureElCheckBox.SetValue( el_data[0] )
         self.elDimXTextBox.SetValue( str( el_data[1] ) )
         self.elDimYTextBox.SetValue( str( el_data[2] ) )
@@ -259,6 +260,10 @@ class MyFrame( MyFirstFrame.MyFrame1 ):
         self.elHeightZRapidTextBox.SetValue( str( el_data[7] ) )
         self.elCenterXOffsetTextBox.SetValue( str( el_data[8] ) )
         self.elCenterYOffsetTextBox.SetValue( str( el_data[9] ) )
+        if wp_name is not None:
+            self.elInfoTextBox.SetValue( wp_name )
+        else:
+            self.elInfoTextBox.SetValue( '' )
 
     def _clean_input(self):
         self.measureElCheckBox.SetValue( False )
@@ -271,6 +276,7 @@ class MyFrame( MyFirstFrame.MyFrame1 ):
         self.elHeightZRapidTextBox.SetValue( '' )
         self.elCenterXOffsetTextBox.SetValue( '' )
         self.elCenterYOffsetTextBox.SetValue( '' )
+        self.elInfoTextBox.SetValue( '' )
 
     def OnSaveElData(self, event):
         if self.current_program is not None and self.current_electrode is not None:
@@ -300,7 +306,7 @@ class MyFrame( MyFirstFrame.MyFrame1 ):
             i = 0
             for c in self.current_program.cmd_list:
                 if c.add_cmd is False and c.is_call_el is True and c.el_done is False:
-                    el_name = c.get_electrode_info()
+                    el_name = c.get_prt_info()
                     current_command = c
                     command_index = i + 1
                     break
@@ -327,8 +333,10 @@ class MyFrame( MyFirstFrame.MyFrame1 ):
                         el_data[9], el_name=el_name )
             new_commands_1 = 'PRT_ELCALL({0},0,0,0)'.format( el_name )
             new_commands_2 = 'CALL_SUB(18)'
+            new_commands_3 = 'PRT_WPCALL({0},0,0)'.format(self.current_program.el_2_wp[el_name])
             new_commands_4 = ';;;__end Check {0} el'.format( el_name )
-            insert_lines = '\n'.join( [new_commands, new_commands_1, new_commands_2, new_commands_1, new_commands_4] )
+            insert_lines = '\n'.join( [new_commands, new_commands_1, new_commands_2, new_commands_1, new_commands_3,
+                                       new_commands_4] )
             new_commands_list = insert_lines.split( '\n' )
             for l in new_commands_list:
                 t = '{1}\t\t{0}'.format( l, command_index + 1 )
@@ -343,7 +351,8 @@ class MyFrame( MyFirstFrame.MyFrame1 ):
             new_def_sub = []
             r_sfd = self.config_data.sfd + self.config_data.pbr / 2
             eh1 = self.config_data.eh1
-            el_block = get_template_el_block().format( sfd=r_sfd, eh1=eh1, eh2=eh1, eh3=eh1, eh4=eh1, eh5=eh1 )
+            el_block = get_template_el_block().format( sfdp = self.config_data.sfd, sfd=r_sfd,
+                                                       eh1=eh1, eh2=eh1, eh3=eh1, eh4=eh1, eh5=eh1 )
             el_block.strip()
             new_def_sub.extend( el_block.split( '\n' ) )
             el_block_2 = get_template_el_block_2().strip()
