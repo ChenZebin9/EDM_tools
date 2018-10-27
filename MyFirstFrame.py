@@ -71,8 +71,17 @@ class MyFrame1 ( wx.Frame ):
 		self.measureElCheckBox = wx.CheckBox( self.m_panel4, wx.ID_ANY, u"加工前测量电极", wx.DefaultPosition, wx.DefaultSize, 0 )
 		gSizer1.Add( self.measureElCheckBox, 0, wx.ALL, 5 )
 		
-		self.elInfoTextBox = wx.TextCtrl( self.m_panel4, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		gSizer1.Add( self.elInfoTextBox, 0, wx.ALL, 5 )
+		bSizer101 = wx.BoxSizer( wx.HORIZONTAL )
+		
+		self.m_staticText21 = wx.StaticText( self.m_panel4, wx.ID_ANY, u"工件 >>", wx.DefaultPosition, wx.DefaultSize, wx.ALIGN_CENTRE )
+		self.m_staticText21.Wrap( -1 )
+		bSizer101.Add( self.m_staticText21, 0, wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		self.elInfoTextBox = wx.TextCtrl( self.m_panel4, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.TE_READONLY )
+		bSizer101.Add( self.elInfoTextBox, 0, wx.ALIGN_CENTER_VERTICAL, 5 )
+		
+		
+		gSizer1.Add( bSizer101, 1, wx.EXPAND, 5 )
 		
 		self.m_staticText4 = wx.StaticText( self.m_panel4, wx.ID_ANY, u"X方向长度", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText4.Wrap( -1 )
@@ -296,6 +305,20 @@ class ConfigDialog ( wx.Dialog ):
 		
 		self.alertBlockTextBox = wx.TextCtrl( self, wx.ID_ANY, u"SHOWDLG (OUT OF TOLERANCE)", wx.DefaultPosition, wx.DefaultSize, 0 )
 		gSizer2.Add( self.alertBlockTextBox, 0, wx.ALL|wx.EXPAND, 2 )
+		
+		self.m_staticText22 = wx.StaticText( self, wx.ID_ANY, u"反模拟高度", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText22.Wrap( -1 )
+		gSizer2.Add( self.m_staticText22, 0, wx.ALIGN_RIGHT|wx.ALL, 5 )
+		
+		self.simHeightTextBox = wx.TextCtrl( self, wx.ID_ANY, u"0", wx.DefaultPosition, wx.DefaultSize, 0 )
+		gSizer2.Add( self.simHeightTextBox, 0, wx.ALL|wx.EXPAND, 2 )
+		
+		self.m_staticText23 = wx.StaticText( self, wx.ID_ANY, u"全局测量速度", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText23.Wrap( -1 )
+		gSizer2.Add( self.m_staticText23, 0, wx.ALIGN_RIGHT|wx.ALL, 5 )
+		
+		self.globalSpeedTextBox = wx.TextCtrl( self, wx.ID_ANY, u"1000", wx.DefaultPosition, wx.DefaultSize, 0 )
+		gSizer2.Add( self.globalSpeedTextBox, 0, wx.ALL|wx.EXPAND, 2 )
 		
 		
 		bSizer9.Add( gSizer2, 1, wx.EXPAND, 5 )

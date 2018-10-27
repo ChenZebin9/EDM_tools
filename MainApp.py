@@ -31,6 +31,10 @@ class ConfigData( object ):
         self.ms = 20
         # 超差时处理语句
         self.eh1 = 'SHOWDLG (HEY! OUT OF TOLERANCE!)'
+        # 反模拟高度
+        self.sim = 0.0
+        # 整体测量速度 mm/min
+        self.gps = 1000
 
 
 def get_template_el_block():
@@ -82,6 +86,14 @@ class ConfigDialog( MyFirstFrame.ConfigDialog ):
         self.data_dict = {}
         self.config_data = config_data_r
         self.conn = None
+        init_cmd = []
+        config_file = 'template\config'
+        if not os.path.exists( config_file ):
+            wx.MessageBox( '配置文件不存在！' )
+            return
+        with open( config_file, 'r' ) as ff:
+            for line in ff.readlines():
+                init_cmd.append( line )
         if os.path.exists( database_file ) is False:
             conn = sqlite3.connect( database_file )
             c = conn.cursor()
@@ -91,12 +103,8 @@ class ConfigDialog( MyFirstFrame.ConfigDialog ):
             c.execute( '''CREATE TABLE STRING_VALUE_CONFIG
             (DES CHAR(256) PRIMARY KEY NOT NULL,
             VALUE_CONFIG CHAR(512) NOT NULL);''' )
-            config_file = 'template\config'
-            if os.path.exists( config_file ):
-                wx.MessageBox( '文件存在！' )
-            with open( config_file, 'r' ) as ff:
-                for line in ff.readlines():
-                    c.execute( line )
+            for cmd in init_cmd:
+                c.execute(cmd)
             conn.commit()
         else:
             self.conn = sqlite3.connect( database_file )
@@ -128,6 +136,10 @@ class ConfigDialog( MyFirstFrame.ConfigDialog ):
         self.measureSpeedTextBox.SetValue( str( ms ) )
         eh1 = self.data_dict['eh1']
         self.alertBlockTextBox.SetValue( eh1 )
+        sim = self.data_dict['sim']
+        self.simHeightTextBox.SetValue( str( sim ) )
+        gps = self.data_dict['gps']
+        self.globalSpeedTextBox.SetValue( str( gps ) )
 
     @staticmethod
     def read_config_first(config_data_r: ConfigData):
@@ -151,6 +163,8 @@ class ConfigDialog( MyFirstFrame.ConfigDialog ):
         config_data_r.rd = data_s['rd']
         config_data_r.sfd = data_s['sfd']
         config_data_r.eh1 = data_s['eh1']
+        config_data_r.sim = data_s['sim']
+        config_data_r.gps = data_s['gps']
         conn.close()
 
     def _set_data(self):
@@ -173,6 +187,10 @@ class ConfigDialog( MyFirstFrame.ConfigDialog ):
             self.config_data.ms = ms
             eh1 = self.alertBlockTextBox.GetValue()
             self.config_data.eh1 = eh1
+            sim = Decimal( self.simHeightTextBox.GetValue() )
+            self.config_data.sim = sim
+            gps = Decimal( self.globalSpeedTextBox.GetValue() )
+            self.config_data.gps = gps
             c = self.conn.cursor()
             c.execute( "UPDATE REAL_VALUE_CONFIG SET VALUE_CONFIG={0} WHERE DES='{1}'".format( sfd, 'sfd' ) )
             c.execute( "UPDATE REAL_VALUE_CONFIG SET VALUE_CONFIG={0} WHERE DES='{1}'".format( pbr, 'pbr' ) )
@@ -183,6 +201,8 @@ class ConfigDialog( MyFirstFrame.ConfigDialog ):
             c.execute( "UPDATE REAL_VALUE_CONFIG SET VALUE_CONFIG={0} WHERE DES='{1}'".format( dd2, 'dd2' ) )
             c.execute( "UPDATE REAL_VALUE_CONFIG SET VALUE_CONFIG={0} WHERE DES='{1}'".format( ms, 'ms' ) )
             c.execute( "UPDATE STRING_VALUE_CONFIG SET VALUE_CONFIG='{0}' WHERE DES='{1}'".format( eh1, 'eh1' ) )
+            c.execute( "UPDATE REAL_VALUE_CONFIG SET VALUE_CONFIG={0} WHERE DES='{1}'".format( sim, 'sim' ) )
+            c.execute( "UPDATE REAL_VALUE_CONFIG SET VALUE_CONFIG={0} WHERE DES='{1}'".format( gps, 'gps' ) )
             self.conn.commit()
             return 0
         except Exception as e:
@@ -351,8 +371,9 @@ class MyFrame( MyFirstFrame.MyFrame1 ):
             new_def_sub = []
             r_sfd = self.config_data.sfd + self.config_data.pbr / 2
             eh1 = self.config_data.eh1
-            el_block = get_template_el_block().format( sfdp = self.config_data.sfd, sfd=r_sfd,
-                                                       eh1=eh1, eh2=eh1, eh3=eh1, eh4=eh1, eh5=eh1 )
+            el_block = get_template_el_block().format( sfd = self.config_data.sfd, sfdp=r_sfd,
+                                                       eh1=eh1, eh2=eh1, eh3=eh1, eh4=eh1, eh5=eh1,
+                                                       sim=self.config_data.sim, gps=self.config_data.gps )
             el_block.strip()
             new_def_sub.extend( el_block.split( '\n' ) )
             el_block_2 = get_template_el_block_2().strip()
@@ -379,7 +400,12 @@ class MyFrame( MyFirstFrame.MyFrame1 ):
             i += 1
             wf.write( '{0}\n'.format( c ) )
         wf.close()
-        wx.MessageBox( '生成完毕！' )
+        mes = '生成完毕！'
+        say_warning = False
+        if self.config_data.sim > 0.0:
+            say_warning = True
+            mes += '模拟高度为{0:.0f}mm！'.format( self.config_data.sim )
+        wx.MessageBox( mes, style=(wx.ICON_WARNING | wx.OK) if say_warning else (wx.ICON_INFORMATION | wx.OK) )
         self.Close()
 
 
