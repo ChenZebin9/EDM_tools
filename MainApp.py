@@ -104,7 +104,7 @@ class ConfigDialog( MyFirstFrame.ConfigDialog ):
             (DES CHAR(256) PRIMARY KEY NOT NULL,
             VALUE_CONFIG CHAR(512) NOT NULL);''' )
             for cmd in init_cmd:
-                c.execute(cmd)
+                c.execute( cmd )
             conn.commit()
         else:
             self.conn = sqlite3.connect( database_file )
@@ -233,8 +233,8 @@ class MyFrame( MyFirstFrame.MyFrame1 ):
         self.current_program = None
         self.current_electrode = None
         self.programs_dir = 'C:\OPS_ING\Programs'
-        if os.path.exists(self.programs_dir) is False:
-            wx.MessageBox('未找到程序文件夹')
+        if os.path.exists( self.programs_dir ) is False:
+            wx.MessageBox( '未找到程序文件夹' )
             return
         all_programs_t = os.listdir( self.programs_dir )
         self.all_programs_dict = {}
@@ -353,7 +353,7 @@ class MyFrame( MyFirstFrame.MyFrame1 ):
                         el_data[9], el_name=el_name )
             new_commands_1 = 'PRT_ELCALL({0},0,0,0)'.format( el_name )
             new_commands_2 = 'CALL_SUB(18)'
-            new_commands_3 = 'PRT_WPCALL({0},0,0)'.format(self.current_program.el_2_wp[el_name])
+            new_commands_3 = 'PRT_WPCALL({0},0,0)'.format( self.current_program.el_2_wp[el_name] )
             new_commands_4 = ';;;__end Check {0} el'.format( el_name )
             insert_lines = '\n'.join( [new_commands, new_commands_1, new_commands_2, new_commands_1, new_commands_3,
                                        new_commands_4] )
@@ -371,7 +371,7 @@ class MyFrame( MyFirstFrame.MyFrame1 ):
             new_def_sub = []
             r_sfd = self.config_data.sfd + self.config_data.pbr / 2
             eh1 = self.config_data.eh1
-            el_block = get_template_el_block().format( sfd = self.config_data.sfd, sfdp=r_sfd,
+            el_block = get_template_el_block().format( sfd=self.config_data.sfd, sfdp=r_sfd,
                                                        eh1=eh1, eh2=eh1, eh3=eh1, eh4=eh1, eh5=eh1,
                                                        sim=self.config_data.sim, gps=self.config_data.gps )
             el_block.strip()
